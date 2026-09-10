@@ -1,5 +1,5 @@
 {
-  "paymentCycle.createButton.tooltip": "Create",
+  "paymentCycle.createButton.label": "Create Payment Cycle",
   "paymentCycle.paymentCycles.page.title": "Payment Cycles",
   "paymentCycle.tooltip.any": "Any",
   "paymentCycle.tooltip.edit": "Edit",
