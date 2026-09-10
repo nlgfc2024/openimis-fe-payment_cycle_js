@@ -12,6 +12,7 @@
   "paymentCycle.PaymentCycleHeadPanel.label.startDate": "Start Date",
   "paymentCycle.PaymentCycleHeadPanel.label.endDate": "End Date",
   "paymentCycle.PaymentCycleHeadPanel.label.status": "Status",
+  "paymentCycle.PaymentCycleHeadPanel.save": "Save",
   "paymentCycle.label.dateValidFrom": "Date From",
   "paymentCycle.label.dateValidTo": "Date To",
   "paymentCycle.label.code": "Code",
