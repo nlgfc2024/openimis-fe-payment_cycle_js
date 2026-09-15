@@ -29,9 +29,6 @@ function PaymentCyclePage({ paymentCycleUuid }) {
   const [refresh, setRefresh] = useState('');
   const { formatMessage, formatMessageWithValues } = useTranslations(MODULE_NAME, modulesManager);
   const paymentCycle = useSelector((state) => state.paymentCycle.paymentCycle);
-  const isPaymentCycleCodeValid = useSelector(
-    (state) => state?.paymentCycle?.validationFields?.paymentCycleCode?.isValid,
-  );
   const mutation = useSelector((state) => state?.paymentCycle?.mutation);
   const submittingMutation = useSelector((state) => state?.paymentCycle?.submittingMutation);
 
@@ -104,15 +101,12 @@ function PaymentCyclePage({ paymentCycleUuid }) {
   };
 
   const isMandatoryFieldsEmpty = () => !(
-    editedPaymentCycle?.code
-    && editedPaymentCycle?.startDate
+    editedPaymentCycle?.startDate
     && editedPaymentCycle?.endDate
     && editedPaymentCycle?.status
   );
 
-  const isValid = () => (
-    (editedPaymentCycle?.code ? isPaymentCycleCodeValid : true)
-  );
+  const isValid = () => true;
 
   const doesPaymentPlanChange = () => !_.isEqual(paymentCycle, editedPaymentCycle);
 

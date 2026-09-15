@@ -9,11 +9,10 @@ import {
   FormattedMessage,
   FormPanel,
   PublishedComponent,
-  ValidatedTextInput,
+  TextInput,
   withModulesManager,
 } from '@openimis/fe-core';
 import PaymentCycleStatusPicker from '../pickers/PaymentCycleStatusPicker';
-import { codeSetValid, codeValidationCheck, codeValidationClear } from '../actions';
 
 const styles = (theme) => ({
   tableTitle: theme.table.title,
@@ -44,20 +43,11 @@ const renderHeadPanelTitle = (classes) => (
 );
 
 class PaymentCycleHeadPanel extends FormPanel {
-  shouldValidate = (inputValue) => {
-    const { code } = this.props;
-    return inputValue !== code;
-  };
-
   render() {
     const {
       edited,
       classes,
       readOnly,
-      isCodeValid,
-      isCodeValidating,
-      codeValidationError,
-      codeValidationErrorMessage,
     } = this.props;
     const paymentCycle = { ...edited };
     return (
@@ -66,22 +56,11 @@ class PaymentCycleHeadPanel extends FormPanel {
         <Divider />
         <Grid container className={classes.item}>
           <Grid item xs={3} className={classes.item}>
-            <ValidatedTextInput
+            <TextInput
               module="paymentCycle"
               label="PaymentCycleHeadPanel.label.code"
-              required
-              readOnly={readOnly}
+              readOnly
               value={paymentCycle?.code}
-              onChange={(v) => this.updateAttribute('code', v)}
-              itemQueryIdentifier="code"
-              codeTakenLabel={codeValidationErrorMessage}
-              shouldValidate={this.shouldValidate}
-              isValid={isCodeValid}
-              isValidating={isCodeValidating}
-              validationError={codeValidationError}
-              action={codeValidationCheck}
-              clearAction={codeValidationClear}
-              setValidAction={codeSetValid}
             />
           </Grid>
           <Grid item xs={3} className={classes.item}>
@@ -123,10 +102,6 @@ class PaymentCycleHeadPanel extends FormPanel {
 }
 
 const mapStateToProps = (state) => ({
-  isCodeValid: state.paymentCycle.validationFields?.paymentCycleCode?.isValid,
-  isCodeValidating: state.paymentCycle.validationFields?.paymentCycleCode?.isValidating,
-  codeValidationError: state.paymentCycle.validationFields?.paymentCycleCode?.validationError,
-  codeValidationErrorMessage: state.paymentCycle.validationFields?.paymentCycleCode?.validationErrorMessage,
   code: state.paymentCycle?.paymentCycle?.code,
 });
 

@@ -1,8 +1,8 @@
 import {
-  graphql, formatMutation, formatQuery, formatPageQueryWithCount, graphqlWithVariables, formatGQLString,
+  graphql, formatMutation, formatQuery, formatPageQueryWithCount, formatGQLString,
 } from '@openimis/fe-core';
 import {
-  CLEAR, ERROR, REQUEST, SUCCESS, VALID,
+  CLEAR, ERROR, REQUEST, SUCCESS,
 } from './utils/action-type';
 import { ACTION_TYPE, MUTATION_SERVICE } from './reducer';
 
@@ -38,7 +38,6 @@ export function fetchGlobalSchema() {
 function formatPaymentCycleGQL(paymentCycle) {
   return `
     ${paymentCycle?.id ? `id: "${paymentCycle.id}"` : ''}
-    ${paymentCycle?.code ? `code: "${formatGQLString(paymentCycle.code)}"` : ''}
     ${paymentCycle?.startDate ? `startDate: "${formatGQLString(paymentCycle.startDate)}"` : ''}
     ${paymentCycle?.endDate ? `endDate: "${formatGQLString(paymentCycle.endDate)}"` : ''}
     ${paymentCycle?.status ? `status: ${formatGQLString(paymentCycle.status)}` : ''}`;
@@ -104,33 +103,6 @@ export const clearPaymentCycleBills = () => (dispatch) => {
   });
 };
 
-export function codeValidationCheck(mm, variables) {
-  return graphqlWithVariables(
-    `
-    query ($code: String!) {
-      paymentCycleCodeValidity(code: $code) {
-        isValid
-        errorCode
-        errorMessage
-      }
-    }
-    `,
-    variables,
-    ACTION_TYPE.PAYMENT_CYCLE_CODE_VALIDATION_FIELDS,
-  );
-}
-
-export function codeSetValid() {
-  return (dispatch) => {
-    dispatch({ type: VALID(ACTION_TYPE.PAYMENT_CYCLE_CODE_VALIDATION_FIELDS) });
-  };
-}
-
-export function codeValidationClear() {
-  return (dispatch) => {
-    dispatch({ type: CLEAR(ACTION_TYPE.PAYMENT_CYCLE_CODE_VALIDATION_FIELDS) });
-  };
-}
 
 function formatDeduplicationTasksMutation(summary, paymentCycle) {
   if (!summary || !Array.isArray(summary)) {
