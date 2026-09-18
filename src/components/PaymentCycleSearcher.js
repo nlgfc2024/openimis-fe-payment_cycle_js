@@ -3,6 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect, useSelector } from 'react-redux';
 
 import { IconButton, Tooltip } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 
 import {
@@ -12,6 +13,7 @@ import { fetchPaymentCycles } from '../actions';
 import {
   DEFAULT_PAGE_SIZE,
   PAYMENT_CYCLE_ROUTE_PAYMENT_CYCLES_PAYMENT_CYCLE,
+  RIGHT_PAYMENT_CYCLE_CREATE,
   RIGHT_PAYMENT_CYCLE_SEARCH,
   ROWS_PER_PAGE_OPTIONS,
 } from '../constants';
@@ -91,6 +93,20 @@ function PaymentCycleSearcher({
     <PaymentCycleFilter filters={filters} onChangeFilters={onChangeFilters} formatMessage={formatMessage} />
   );
 
+  const onCreate = () => history.push(
+    `/${modulesManager.getRef(PAYMENT_CYCLE_ROUTE_PAYMENT_CYCLES_PAYMENT_CYCLE)}`,
+  );
+
+  const searcherActions = () => [
+    {
+      label: formatMessage('createButton.label'),
+      icon: <AddIcon />,
+      authorized: rights.includes(RIGHT_PAYMENT_CYCLE_CREATE),
+      onClick: onCreate,
+      variant: 'outlined',
+    },
+  ];
+
   return (
     <Searcher
       module="paymentCycle"
@@ -109,6 +125,9 @@ function PaymentCycleSearcher({
       defaultPageSize={DEFAULT_PAGE_SIZE}
       rowIdentifier={rowIdentifier}
       onDoubleClick={onDoubleClick}
+      enableActionButtons
+      searcherActionsPosition="header-right"
+      searcherActions={searcherActions()}
     />
   );
 }
