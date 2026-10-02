@@ -5,7 +5,12 @@ import {
   Form, Helmet, useTranslations, useModulesManager, useHistory, journalize, coreAlert,
 } from '@openimis/fe-core';
 import _ from 'lodash';
-import { EMPTY_STRING, MODULE_NAME, PAYMENT_CYCLE_STATUS } from '../constants';
+import {
+  EMPTY_STRING,
+  MODULE_NAME,
+  PAYMENT_CYCLE_ROUTE_PAYMENT_CYCLES,
+  PAYMENT_CYCLE_STATUS,
+} from '../constants';
 import PaymentCycleHeadPanel from '../components/PaymentCycleHeadPanel';
 import {
   clearPaymentCycle,
@@ -14,6 +19,7 @@ import {
   updatePaymentCycle,
 } from '../actions';
 import PaymentCycleTab from '../components/PaymentCycleTab';
+import { ACTION_TYPE } from '../reducer';
 
 const useStyles = makeStyles((theme) => ({
   page: theme.page,
@@ -37,7 +43,10 @@ function PaymentCyclePage({ paymentCycleUuid }) {
   useEffect(() => {
     if (prevSubmittingMutationRef.current && !submittingMutation) {
       dispatch(journalize(mutation));
-      if (mutation?.clientMutationId) {
+      if (mutation?.actionType === ACTION_TYPE.CREATE_PAYMENT_CYCLE) {
+        const paymentCyclesRouteRef = modulesManager.getRef(PAYMENT_CYCLE_ROUTE_PAYMENT_CYCLES);
+        history.replace(`/${paymentCyclesRouteRef}`);
+      } else if (mutation?.clientMutationId) {
         dispatch(fetchPaymentCycle(modulesManager, [`clientMutationId: "${mutation.clientMutationId}"`]));
       }
     }
