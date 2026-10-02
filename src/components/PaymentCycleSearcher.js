@@ -122,8 +122,7 @@ function PaymentCycleSearcher({
       defaultPageSize={DEFAULT_PAGE_SIZE}
       rowIdentifier={rowIdentifier}
       onDoubleClick={onDoubleClick}
-      enableActionButtons
-      searcherActionsPosition="header-right"
+      enableHeaderActionButtons
       searcherActions={searcherActions()}
     />
   );
