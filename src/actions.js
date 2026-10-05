@@ -74,7 +74,7 @@ export function updatePaymentCycle(paymentCycle, clientMutationLabel) {
     mutation.payload,
     [REQUEST(ACTION_TYPE.MUTATION), SUCCESS(ACTION_TYPE.UPDATE_PAYMENT_CYCLE), ERROR(ACTION_TYPE.MUTATION)],
     {
-      actionType: ACTION_TYPE.CREATE_PAYMENT_CYCLE,
+      actionType: ACTION_TYPE.UPDATE_PAYMENT_CYCLE,
       clientMutationId: mutation.clientMutationId,
       clientMutationLabel,
       requestedDateTime,
