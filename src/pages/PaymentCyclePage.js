@@ -134,6 +134,9 @@ function PaymentCyclePage({ paymentCycleUuid }) {
         back={back}
         save={save}
         canSave={canSave}
+        enableSaveButton={false}
+        onFormSave={save}
+        canSaveForm={canSave}
         HeadPanel={PaymentCycleHeadPanel}
         Panels={getPanels()}
         paymentCycleUuid={paymentCycleUuid}

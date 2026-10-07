@@ -1,7 +1,7 @@
 import React from 'react';
 import { injectIntl } from 'react-intl';
 
-import { Divider, Grid, Typography } from '@material-ui/core';
+import { Button, Divider, Grid, Typography } from '@material-ui/core';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 
 import {
@@ -48,6 +48,12 @@ class PaymentCycleHeadPanel extends FormPanel {
       edited,
       classes,
       readOnly,
+      isCodeValid,
+      isCodeValidating,
+      codeValidationError,
+      codeValidationErrorMessage,
+      onFormSave,
+      canSaveForm,
       intl,
       modulesManager,
     } = this.props;
@@ -104,6 +110,20 @@ class PaymentCycleHeadPanel extends FormPanel {
             />
           </Grid>
         </Grid>
+        {!readOnly && (
+          <Grid container className={classes.item}>
+            <Grid item xs={12} className={classes.item}>
+              <Button
+                color="primary"
+                variant="contained"
+                onClick={() => onFormSave(edited)}
+                disabled={!canSaveForm || !canSaveForm()}
+              >
+                <FormattedMessage module="paymentCycle" id="PaymentCycleHeadPanel.save" />
+              </Button>
+            </Grid>
+          </Grid>
+        )}
       </>
     );
   }
