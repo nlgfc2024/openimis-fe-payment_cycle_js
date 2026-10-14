@@ -2,14 +2,13 @@ import React, { useEffect, useState, useRef } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { connect, useSelector, useDispatch } from 'react-redux';
 import {
-  Form, Helmet, useTranslations, useModulesManager, useHistory, journalize, coreAlert,
+  Form, Helmet, useTranslations, useModulesManager, useHistory, journalize, showPageFeedback, coreAlert,
 } from '@openimis/fe-core';
 import _ from 'lodash';
 import {
   EMPTY_STRING,
   MODULE_NAME,
   PAYMENT_CYCLE_ROUTE_PAYMENT_CYCLES,
-  PAYMENT_CYCLE_STATUS,
 } from '../constants';
 import PaymentCycleHeadPanel from '../components/PaymentCycleHeadPanel';
 import {
@@ -44,13 +43,23 @@ function PaymentCyclePage({ paymentCycleUuid }) {
     if (prevSubmittingMutationRef.current && !submittingMutation) {
       dispatch(journalize(mutation));
       if (mutation?.actionType === ACTION_TYPE.CREATE_PAYMENT_CYCLE) {
+        dispatch(showPageFeedback({
+          severity: 'success',
+          title: formatMessage('paymentCycle.create.success.title'),
+          message: formatMessage('paymentCycle.create.success.message'),
+        }));
+        dispatch(coreAlert({
+          severity: 'success',
+          title: formatMessage('paymentCycle.create.popup.title'),
+          message: formatMessage('paymentCycle.create.popup.message'),
+        }));
         const paymentCyclesRouteRef = modulesManager.getRef(PAYMENT_CYCLE_ROUTE_PAYMENT_CYCLES);
         history.replace(`/${paymentCyclesRouteRef}`);
       } else if (mutation?.clientMutationId) {
         dispatch(fetchPaymentCycle(modulesManager, [`clientMutationId: "${mutation.clientMutationId}"`]));
       }
     }
-  }, [submittingMutation]);
+  }, [submittingMutation, mutation, dispatch, formatMessage, modulesManager, history]);
 
   useEffect(() => {
     prevSubmittingMutationRef.current = submittingMutation;
@@ -100,12 +109,6 @@ function PaymentCyclePage({ paymentCycleUuid }) {
         editedPaymentCycle,
         formatMessageWithValues('paymentCycle.create.mutationLabel', titleParams(paymentCycle)),
       ));
-      if (editedPaymentCycle?.status === PAYMENT_CYCLE_STATUS.ACTIVE) {
-        dispatch(coreAlert(
-          formatMessage('PaymentCyclePage.taskCreated.header'),
-          formatMessage('PaymentCyclePage.taskCreated.body'),
-        ));
-      }
     }
   };
 
