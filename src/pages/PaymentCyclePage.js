@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { connect, useSelector, useDispatch } from 'react-redux';
 import {
-  Form, Helmet, useTranslations, useModulesManager, useHistory, journalize, coreAlert,
+  Form, Helmet, useTranslations, useModulesManager, useHistory, journalize, showPageFeedback, waitForMutation,
 } from '@openimis/fe-core';
 import _ from 'lodash';
 import {
@@ -33,6 +33,8 @@ function PaymentCyclePage({ paymentCycleUuid }) {
   const history = useHistory();
   const [editedPaymentCycle, setEditedPaymentCycle] = useState({});
   const [refresh, setRefresh] = useState('');
+  const [clientMutationId, setClientMutationId] = useState(null);
+  const [createdPaymentCycleStatus, setCreatedPaymentCycleStatus] = useState(null);
   const { formatMessage, formatMessageWithValues } = useTranslations(MODULE_NAME, modulesManager);
   const paymentCycle = useSelector((state) => state.paymentCycle.paymentCycle);
   const mutation = useSelector((state) => state?.paymentCycle?.mutation);
@@ -44,17 +46,43 @@ function PaymentCyclePage({ paymentCycleUuid }) {
     if (prevSubmittingMutationRef.current && !submittingMutation) {
       dispatch(journalize(mutation));
       if (mutation?.actionType === ACTION_TYPE.CREATE_PAYMENT_CYCLE) {
-        const paymentCyclesRouteRef = modulesManager.getRef(PAYMENT_CYCLE_ROUTE_PAYMENT_CYCLES);
-        history.replace(`/${paymentCyclesRouteRef}`);
+        setClientMutationId(mutation.clientMutationId);
+        setCreatedPaymentCycleStatus(editedPaymentCycle.status);
       } else if (mutation?.clientMutationId) {
         dispatch(fetchPaymentCycle(modulesManager, [`clientMutationId: "${mutation.clientMutationId}"`]));
       }
     }
-  }, [submittingMutation]);
+  }, [submittingMutation, mutation, dispatch, modulesManager, editedPaymentCycle.status]);
 
   useEffect(() => {
     prevSubmittingMutationRef.current = submittingMutation;
   });
+
+  useEffect(() => {
+    if (!clientMutationId) return undefined;
+
+    let cancelled = false;
+    const waitForSuccessfulCreation = async () => {
+      const result = await dispatch(waitForMutation(clientMutationId));
+      if (cancelled) return;
+
+      if (result?.status === 2) {
+        const requiresApproval = createdPaymentCycleStatus === PAYMENT_CYCLE_STATUS.ACTIVE;
+        dispatch(showPageFeedback({
+          severity: 'success',
+          title: formatMessage(`paymentCycle.create.success.${requiresApproval ? 'approval' : 'created'}.title`),
+          message: formatMessage(`paymentCycle.create.success.${requiresApproval ? 'approval' : 'created'}.message`),
+        }));
+        const paymentCyclesRouteRef = modulesManager.getRef(PAYMENT_CYCLE_ROUTE_PAYMENT_CYCLES);
+        history.replace(`/${paymentCyclesRouteRef}`);
+      } else {
+        setClientMutationId(null);
+      }
+    };
+
+    waitForSuccessfulCreation();
+    return () => { cancelled = true; };
+  }, [clientMutationId, createdPaymentCycleStatus, dispatch, formatMessage, modulesManager, history]);
   const back = () => history.goBack();
 
   const titleParams = (paymentCycle) => ({
@@ -100,12 +128,6 @@ function PaymentCyclePage({ paymentCycleUuid }) {
         editedPaymentCycle,
         formatMessageWithValues('paymentCycle.create.mutationLabel', titleParams(paymentCycle)),
       ));
-      if (editedPaymentCycle?.status === PAYMENT_CYCLE_STATUS.ACTIVE) {
-        dispatch(coreAlert(
-          formatMessage('PaymentCyclePage.taskCreated.header'),
-          formatMessage('PaymentCyclePage.taskCreated.body'),
-        ));
-      }
     }
   };
 

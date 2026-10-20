@@ -7,7 +7,7 @@ import AddIcon from '@material-ui/icons/Add';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 
 import {
-  Searcher, useHistory, useModulesManager, useTranslations, PublishedComponent,
+  Searcher, useHistory, useModulesManager, useTranslations, PublishedComponent, StatusChip,
 } from '@openimis/fe-core';
 import { fetchPaymentCycles } from '../actions';
 import {
@@ -18,7 +18,12 @@ import {
   ROWS_PER_PAGE_OPTIONS,
 } from '../constants';
 import PaymentCycleFilter from './PaymentCycleFilter';
-import PaymentCycleStatusPicker from '../pickers/PaymentCycleStatusPicker';
+
+const PAYMENT_CYCLE_STATUS_SEVERITY = {
+  ACTIVE: 'success',
+  PENDING: 'warning',
+  SUSPENDED: 'error',
+};
 
 function PaymentCycleSearcher({
   fetchingPaymentCycles,
@@ -81,10 +86,9 @@ function PaymentCycleSearcher({
       />
     ),
     (paymentCycle) => (
-      <PaymentCycleStatusPicker
-        value={paymentCycle?.status}
-        required
-        readOnly
+      <StatusChip
+        label={formatMessage(`paymentCycleStatusPicker.${paymentCycle?.status}`)}
+        severity={PAYMENT_CYCLE_STATUS_SEVERITY[paymentCycle?.status]}
       />
     ),
     (paymentCycle) => (
