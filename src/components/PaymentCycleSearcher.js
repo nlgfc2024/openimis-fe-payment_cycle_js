@@ -120,6 +120,7 @@ function PaymentCycleSearcher({
       errorItems={errorPaymentCycles}
       tableTitle={formatMessageWithValues('paymentCycle.searcherResultsTitle', { paymentCyclesTotalCount })}
       headers={headers}
+      columnWidths={['24%', '20%', '20%', undefined, '48px']}
       itemFormatters={itemFormatters}
       sorts={sorts}
       rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
